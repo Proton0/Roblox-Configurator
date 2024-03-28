@@ -4,14 +4,16 @@ from pick import pick
 import getserver
 import fflags
 import requests
+
+import mods
 import patches
 import time
 while True:
     version_roblox = patches.GetRobloxVersion("/Applications/Roblox.app/Contents/Info.plist")
     if version_roblox == "Unknown":
-        title = "Roblox Configurator 1.4 for MacOS"
+        title = "Roblox Configurator 1.5 for MacOS"
     else:
-        title = f"Roblox Configurator 1.4 for MacOS (Roblox: {version_roblox})"
+        title = f"Roblox Configurator 1.5 for MacOS (Roblox: {version_roblox})"
     options = [
         "Install Roblox",
         "Install Roblox Studio",
@@ -20,11 +22,14 @@ while True:
         "Get roblox version",
         "Launch roblox",
         "Launch roblox and get server ip and port",
-        "Get roblox channel"
+        "Get roblox channel",
+        "Mods"
     ]
 
     option, index = pick(options, title)
     try:
+        if option == "Mods":
+            mods.InstallUI()
         if option == "Uninstall Roblox":
             patches.UninstallRoblox()
         if option == "Install Roblox Studio":
