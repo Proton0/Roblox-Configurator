@@ -1,6 +1,8 @@
 import subprocess
 
 from pick import pick
+
+import backups
 import getserver
 import fflags
 import requests
@@ -11,9 +13,9 @@ import time
 while True:
     version_roblox = patches.GetRobloxVersion("/Applications/Roblox.app/Contents/Info.plist")
     if version_roblox == "Unknown":
-        title = "Roblox Configurator 1.5 for MacOS"
+        title = "Roblox Configurator 1.6 for MacOS"
     else:
-        title = f"Roblox Configurator 1.5 for MacOS (Roblox: {version_roblox})"
+        title = f"Roblox Configurator 1.6 for MacOS (Roblox: {version_roblox})"
     options = [
         "Install Roblox",
         "Install Roblox Studio",
@@ -23,11 +25,14 @@ while True:
         "Launch roblox",
         "Launch roblox and get server ip and port",
         "Get roblox channel",
-        "Mods"
+        "Mods",
+        "Backups"
     ]
 
     option, index = pick(options, title)
     try:
+        if option == "Backups":
+            backups.BackupMain()
         if option == "Mods":
             mods.InstallUI()
         if option == "Uninstall Roblox":
