@@ -5,7 +5,6 @@ from pick import pick
 import backups
 import getserver
 import fflags
-import requests
 
 import mods
 import patches
