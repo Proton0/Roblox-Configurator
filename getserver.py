@@ -2,6 +2,7 @@ import os
 import subprocess
 import time
 import re
+import requests
 import psutil
 def NotifyPlayer(title, message):
     os.system(f"""
@@ -42,6 +43,14 @@ def Launch():
                 print(f"Server Port : {udmux_port}")
                 print(f"RCC IP : {rcc_server_address}")
                 print(f"RCC Port : {rcc_server_port}")
+                print("Getting the information about the servers (may take a while)")
+                server = requests.get(f'http://ip-api.com/json/{udmux_address}').json()
+                if server["status"] == "success":
+                    print(server)
+                    NotifyPlayer("Roblox Configurator", f"Got location of server!\nCountry: {server['country']}\nRegion: {server['regionName']}\nCity: {server['city']}\nTimezone: {server['timezone']}\nLAT: {server['lat']}\n LON: {server['lon']}\nISP: {server['isp']}")
+                else:
+                    print("Failed to get server data")
+
         else:
             print("No more log output")
             if not hasFound:
