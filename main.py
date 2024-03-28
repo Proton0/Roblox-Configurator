@@ -1,5 +1,7 @@
 from pick import pick
+import fflags
 import patches
+import time
 while True:
     version_roblox = patches.GetRobloxVersion("/Applications/Roblox.app/Contents/Info.plist")
     if version_roblox == "Unknown":
@@ -9,15 +11,20 @@ while True:
     options = [
         "Install Roblox",
         "Uninstall Roblox",
-        "Unlock FPS",
-        "Unlock FPS + Enable Vulkan",
+        "FFLag Tweaks",
         "Get roblox version"
     ]
 
     option, index = pick(options, title)
+    try:
+        if option == "Install Roblox":
+            patches.install()
 
-    if option == "Install Roblox":
-        patches.install()
+        if option == "Get roblox version":
+            print(patches.GetRobloxVersion("/Applications/Roblox.app/Contents/Info.plist"))
 
-    if option == "Get roblox version":
-        print(patches.GetRobloxVersion())
+        if option == "FFLag Tweaks":
+            fflags.FFlagLaunch()
+        time.sleep(5)
+    except Exception as e:
+        print(f"Error : {e}")
