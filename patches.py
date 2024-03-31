@@ -1,11 +1,11 @@
 import os
 from tqdm import tqdm
 import shutil
+import re
 import plistlib
 import requests
-import time
 from pick import pick
-from subprocess import Popen, PIPE
+from subprocess import *
 import psutil
 
 def UninstallRoblox():
@@ -38,7 +38,7 @@ def KillRoblox():
         os.kill(pid, 0)
 
 def KillRobloxInstaller():
-    for pid in (process.pid for process in psutil.process_iter() if process.name() == "RobloxPlayerInstaller"):
+    for pid in (process.pid for process in psutil.process_iter() if process.name() == "RobloxPlayerInstaller_patched"):
         os.kill(pid, 0)
 
 
@@ -126,7 +126,7 @@ def install():
     print("Mounted the DMG")
     # start thread
     print("Launching the installer")
-    installer_process = Popen("/Volumes/RobloxPlayerInstaller/RobloxPlayerInstaller.app/Contents/MacOS/RobloxPlayerInstaller")
+    installer_process = Popen("/Volumes/RobloxPlayerInstaller_patched/RobloxPlayerInstaller_patched.app/Contents/MacOS/RobloxPlayerInstaller_patched")
     completed = psutil.wait_procs([installer_process])
     if completed:
         print("Install completed successfully.")
@@ -137,7 +137,7 @@ def install():
     KillRobloxInstaller()
     print("Cleaning up")
     print("Unmounting the DMG")
-    os.system("hdiutil detach /Volumes/RobloxPlayerInstaller")
+    os.system("hdiutil detach /Volumes/RobloxPlayerInstaller_patched")
     print("Deleting the DMG")
     os.remove("installer.dmg")
     KillRobloxInstaller()
@@ -161,3 +161,31 @@ def GetLatestRobloxVersion():
         return "Unknown"
     k = r.json()
     return k["version"], k["clientVersionUpload"]
+
+
+def get_versions(target_year, target_month):
+    url = "https://setup.rbxcdn.com/mac/DeployHistory.txt"
+    response = requests.get(url)
+
+    if response.status_code == 200:
+        content = response.text
+
+        # Define regex pattern to extract version-hash and date
+        pattern = r"New Client version-([a-f0-9]+) at (\d{1,2})/(\d{1,2})/(\d{4})"
+
+        versions = []
+        for line in content.split('\n'):
+            match = re.search(pattern, line)
+            if match:
+                year, month = int(match.group(4)), int(match.group(2))
+                if year == target_year and month == target_month:
+                    version = f"version-{match.group(1)}"
+                    date_published = f"{match.group(2)}/{match.group(3)}/{match.group(4)}"
+                    versions.append((version, date_published))
+
+        return versions
+
+    else:
+        print("Failed to fetch data")
+        return None
+

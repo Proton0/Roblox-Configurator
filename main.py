@@ -25,7 +25,7 @@ while True:
         "Launch roblox and get server ip and port",
         "Get roblox channel",
         "Mods",
-        "Backups"
+        "Backups",
     ]
 
     option, index = pick(options, title)
