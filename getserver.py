@@ -17,7 +17,7 @@ def Launch():
                                stderr=subprocess.PIPE)
     found_udmux = False
     found_rcc = False
-    while not hasFound:
+    while True:
         line = process.stdout.readline().decode()
         if line:
             print(line)
@@ -37,7 +37,7 @@ def Launch():
 
             # check
             if found_udmux and found_rcc:
-                hasFound = True
+                print("found")
                 NotifyPlayer("Roblox Configurator", f"Found server details\nServer IP : {udmux_address}\nServer Port : {udmux_port}\nRCC IP : {rcc_server_address}\nRCC Port : {rcc_server_port}")
                 print(f"Server IP : {udmux_address}")
                 print(f"Server Port : {udmux_port}")
@@ -50,6 +50,7 @@ def Launch():
                     NotifyPlayer("Roblox Configurator", f"Got location of server!\nCountry: {server['country']}\nRegion: {server['regionName']}\nCity: {server['city']}\nTimezone: {server['timezone']}\nLAT: {server['lat']}\n LON: {server['lon']}\nISP: {server['isp']}")
                 else:
                     print("Failed to get server data")
+                break
 
         else:
             print("No more log output")
