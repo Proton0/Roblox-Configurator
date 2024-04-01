@@ -31,6 +31,10 @@ def UninstallRoblox():
         shutil.rmtree("~/Library/Saved Application State/com.Roblox.RobloxStudio.savedState", ignore_errors=True)
         shutil.rmtree("~/Library/Caches/com.Roblox.StudioBootstrapper", ignore_errors=True)
         print("Reset complete!")
+    if option == "App uninstall (will uninstall player and studio)":
+        shutil.rmtree("/Applications/Roblox.app", ignore_errors=True)
+        shutil.rmtree("/Applications/RobloxStudio.app", ignore_errors=True)
+        print("Deleted roblox successfully!")
 
 
 def KillRoblox():
@@ -126,7 +130,7 @@ def install():
     print("Mounted the DMG")
     # start thread
     print("Launching the installer")
-    installer_process = Popen("/Volumes/RobloxPlayerInstaller_patched/RobloxPlayerInstaller_patched.app/Contents/MacOS/RobloxPlayerInstaller_patched")
+    installer_process = Popen("/Volumes/RobloxPlayerInstaller/RobloxPlayerInstaller.app/Contents/MacOS/RobloxPlayerInstaller")
     completed = psutil.wait_procs([installer_process])
     if completed:
         print("Install completed successfully.")
@@ -137,7 +141,7 @@ def install():
     KillRobloxInstaller()
     print("Cleaning up")
     print("Unmounting the DMG")
-    os.system("hdiutil detach /Volumes/RobloxPlayerInstaller_patched")
+    os.system("hdiutil detach /Volumes/RobloxPlayerInstaller")
     print("Deleting the DMG")
     os.remove("installer.dmg")
     KillRobloxInstaller()

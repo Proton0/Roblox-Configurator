@@ -1,7 +1,7 @@
 import os
-from tqdm import tqdm
 from pick import pick
 import shutil
+from tqdm import tqdm
 def InstallUI():
     options = os.listdir("mods")
     title = "Select a pack to install"
@@ -12,15 +12,16 @@ def InstallUI():
         return
     Install("mods/" + option)
 
+
 def Install(pack_folder):
     folders = []
-    content = pack_folder + '/content'
+    content = os.path.join(pack_folder, 'content')
     if os.path.exists(content):
         folders.append(content)
-    platformcontent = pack_folder + '/PlatformContent'
+    platformcontent = os.path.join(pack_folder, 'PlatformContent')
     if os.path.exists(platformcontent):
         folders.append(platformcontent)
-    extracontent = pack_folder + '/ExtraContent'
+    extracontent = os.path.join(pack_folder, 'ExtraContent')
     if os.path.exists(extracontent):
         folders.append(extracontent)
 
@@ -38,21 +39,26 @@ def Install(pack_folder):
 
     print("Please do not launch roblox!")
     for folder in folders:
-        folder_name = os.path.basename(folder)
-        destination_folder = os.path.join("/Applications/Roblox.app/Contents/Resources", folder_name)
-        if not os.path.exists(destination_folder):
-            print(f"Error: {destination_folder} does not exist!")
-            continue
+        if folder.endswith('PlatformContent'):
+            destination = "/Applications/Roblox.app/Contents/Resources/PlatformContent"
+            folder_name = "PlatformContent"
+        elif folder.endswith('ExtraContent'):
+            destination = "/Applications/Roblox.app/Contents/Resources/ExtraContent"
+            folder_name = "ExtraContent"
+        elif folder.endswith('content'):
+            destination = "/Applications/Roblox.app/Contents/Resources/content"
+            folder_name = "content"
 
-        files_to_replace = os.listdir(folder)
-        for file_name in tqdm(files_to_replace, desc=f"Installing mod", unit="file"):
-            source_file = os.path.join(folder, file_name)
-            destination_file = os.path.join(destination_folder, file_name)
-            if os.path.exists(destination_file):
-                if os.path.isdir(destination_file):
-                    shutil.rmtree(destination_file)  # Remove existing directory
-                else:
-                    os.remove(destination_file)  # Remove existing file
-            shutil.move(source_file, destination_folder)
+        print(f"Replacing {folder_name}...")
+        # Copy files from source folder to destination folder with tqdm progress bar
+        for root, dirs, files in tqdm(os.walk(folder), desc=f"Replacing {folder_name}", unit='files'):
+            for file in files:
+                src_file = os.path.join(root, file)
+                rel_path = os.path.relpath(src_file, folder)
+                dest_file = os.path.join(destination, rel_path)
+                dest_dir = os.path.dirname(dest_file)
+                if not os.path.exists(dest_dir):
+                    os.makedirs(dest_dir)
+                shutil.copy(src_file, dest_file)
 
     print("Mod installed successfully.")
