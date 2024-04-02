@@ -24,7 +24,7 @@ def download(url, download):
         logging.error(f"Error downloading file: {response.status_code}")
     else:
         total_size = int(response.headers.get('content-length', 0))
-        progress_bar = tqdm(total=total_size, unit='B', unit_scale=True, desc="Downloading update")
+        progress_bar = tqdm(total=total_size, unit='B', unit_scale=True, desc="Downloading")
         with open(download, 'wb') as file:
             for data in response.iter_content(1024):
                 progress_bar.update(len(data))
@@ -57,6 +57,10 @@ for argument in sys.argv:
         print("-s / --show-output     | Shows roblox's output")
         print("--no-update            | Forces roblox configurator to not update roblox")
         print("--reinstall            | Will reinstall roblox (requires updates to be enabled)")
+        print("--roblox-bootstrapper  | Launches roblox's original bootstrapper")
+        exit()
+    if argument == "--roblox-bootstrapper":
+        subprocess.Popen("/Applications/Roblox.app/Contents/MacOS/RobloxPlayer_original", stdout=subprocess.DEVNULL, stdin=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         exit()
 
 if debug:
@@ -72,7 +76,7 @@ else:
 
 if not os.path.exists("bootstrapper.json"):
     with open("bootstrapper.json", "w+") as f:
-        f.write('{"do_not_update": false, "mods": []}')
+        f.write('{"do_not_update": false, "channel": "Unknown"}')
     print("Created configuration successfully")
 
 if not os.path.exists("mods"):
@@ -153,6 +157,14 @@ try:
             if match:
                 logging.debug("Line matched with channel regex")
                 channel_name = match.group(1)
+                if bootstrapperConfiguration["channel"] != channel_name:
+                    old = bootstrapperConfiguration["channel"]
+                    bootstrapperConfiguration["channel"] = channel_name
+                    logging.warning(f"Roblox has changed your channel from {old} to {channel_name}!")
+                    f = open("bootstrapper.json", "w")
+                    f.write(json.dumps(bootstrapperConfiguration))
+                    f.close()
+                    NotifyPlayer("Roblox Configurator", f"Roblox has changed your client's channel from {old} to {channel_name}!")
                 break  # Exit the loop once the channel name is found
         else:
             logging.error("Failed to get channel")
@@ -204,4 +216,11 @@ except Exception as e:
 while process.poll() is None:
     if show_roblox_output:
         print(process.stdout.readline().decode())
-logging.info("Roblox exited")
+
+logging.debug("roblox exited")
+logging.debug("saving configuration (just in case)")
+f = open("bootstrapper.json", "w")
+f.write(json.dumps(bootstrapperConfiguration))
+f.close()
+logging.debug("write success")
+exit(0)

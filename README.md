@@ -6,7 +6,7 @@ A Roblox configurator for MacOS
 
 ## Demo
 
-![Roblox Configurator](https://github.com/Proton0/Roblox-Configurator/blob/main/github/demo.png?raw=true)
+![Roblox Configurator 2.1 Demo](https://github.com/Proton0/Roblox-Configurator/blob/main/github/demo.png?raw=true)
 
 
 ## Run Locally
