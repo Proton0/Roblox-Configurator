@@ -25,7 +25,7 @@ def Install(pack_folder, bootstrapper=False):
     if os.path.exists(extracontent):
         folders.append(extracontent)
 
-    if bootstrapper:
+    if bootstrapper == False:
         print(""" --- WARNING --- WARNING --- WARNING
         Using a mod for roblox can cause security issues. Please check the pack and make sure that there is NO malware on it!!!
         Proton0 is NOT responsible for any damages done to your device!

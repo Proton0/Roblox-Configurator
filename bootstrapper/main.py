@@ -108,12 +108,10 @@ except Exception as e:
     logging.error(traceback.format_exc())
 logging.info("testing...")
 try:
+    logging.info(bootstrapperConfiguration)
     for mod in bootstrapperConfiguration["mods"]:
-        if mod["enabled"]:
-            logging.debug(f"Adding {mod}")
-            mods.Install(mod["folder"], True)
-        else:
-            logging.info("No mods installed")
+        logging.debug(f"Adding {mod}")
+        mods.Install(mod, True)
 except Exception as e:
     logging.error(e)
 
