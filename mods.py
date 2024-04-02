@@ -10,8 +10,14 @@ def InstallUI():
     if os.path.isfile("mods/" + option):
         print("Files are not allowed. Please extract it")
         return
-    Install("mods/" + option)
-
+    option2, index = pick(["Add mod to bootstrapper (requires roblox configurator bootstrapper)", "Install mod normally"], "Select what type of install?")
+    if option2 == "Install mod normally":
+        Install("mods/" + option)
+    if option2 == "Add mod to bootstrapper (requires roblox configurator bootstrapper)":
+        print("Moving the mod to the bootstrapper mods folder")
+        shutil.copytree("mods/" + option, f"/Applications/Roblox.app/Contents/MacOS/mods/{option}")
+        Install("mods/" + option)
+        print("Successfully added and installed the mod!")
 
 def Install(pack_folder, bootstrapper=False):
     folders = []

@@ -16,7 +16,29 @@ def NotifyPlayer(title, message):
     osascript -e 'display notification "{message}" with title "{title}" sound name "Submarine"'
     """)
 
+def download(url, download):
+    response = requests.get(url=url,
+                            stream=True, allow_redirects=True, headers={
+            'User-Agent': "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_2) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1309.0 Safari/537.17"})
+    if response.status_code != 200:
+        logging.error(f"Error downloading file: {response.status_code}")
+    else:
+        total_size = int(response.headers.get('content-length', 0))
+        progress_bar = tqdm(total=total_size, unit='B', unit_scale=True, desc="Downloading update")
+        with open(download, 'wb') as file:
+            for data in response.iter_content(1024):
+                progress_bar.update(len(data))
+                if not data:
+                    break
+                file.write(data)
+        progress_bar.close()
+
+        if not os.path.exists(download):
+            logging.error("Failed to download Roblox")
+
+
 do_not_update = False
+reinstall_roblox = False
 debug = False
 show_roblox_output = False
 for argument in sys.argv:
@@ -26,12 +48,15 @@ for argument in sys.argv:
         debug = True
     if argument == "-s" or argument == "--show-output":
         show_roblox_output = True
+    if argument == "-r" or argument == "--reinstall":
+        reinstall_roblox = True
     if argument == "-h" or argument == "--help":
         print("Roblox Configurator Bootstrapper")
         print("Made by Proton0")
         print("-h / --help            | Shows help command")
         print("-s / --show-output     | Shows roblox's output")
         print("--no-update            | Forces roblox configurator to not update roblox")
+        print("--reinstall            | Will reinstall roblox (requires updates to be enabled)")
         exit()
 
 if debug:
@@ -49,6 +74,9 @@ if not os.path.exists("bootstrapper.json"):
     with open("bootstrapper.json", "w+") as f:
         f.write('{"do_not_update": false, "mods": []}')
     print("Created configuration successfully")
+
+if not os.path.exists("mods"):
+    os.mkdir("mods")
 
 bootstrapperConfiguration = json.load(open("bootstrapper.json"))
 logging.info("loaded bootstrapper configuration succesfully")
@@ -70,48 +98,34 @@ try:
         else:
             k = r.json()
             with open("/Applications/Roblox.app/Contents/Info.plist", 'rb') as fp:
-                plist = plistlib.loads(fp.read())
+                if reinstall_roblox:
+                    plist = {
+                        "CFBundleShortVersionString": "update"
+                    }
+                else:
+                    plist = plistlib.loads(fp.read())
                 if k["version"] == plist["CFBundleShortVersionString"]:
                     print("Roblox is up-to-date")
                 else:
                     print("Downloading the latest version of Roblox")
-                    logging.info(f"Downloading {k['clientVersionUpload']}")
-
-                    response = requests.get(url=k['clientVersionUpload'], stream=True, allow_redirects=True, headers={
-                        'User-Agent': "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_2) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1309.0 Safari/537.17"})
-                    if response.status_code != 200:
-                        logging.error(f"Error downloading file: {response.status_code}")
-                    else:
-                        total_size = int(response.headers.get('content-length', 0))
-                        progress_bar = tqdm(total=total_size, unit='B', unit_scale=True, desc="Downloading update")
-                        with open("Roblox.zip", 'wb') as file:
-                            for data in response.iter_content(1024):
-                                progress_bar.update(len(data))
-                                if not data:
-                                    break
-                                file.write(data)
-                        progress_bar.close()
-
-                        if not os.path.exists("Roblox.zip"):
-                            logging.error("Failed to download Roblox")
-                        else:
-                            print("Successfully downloaded Roblox")
-                            with zipfile.ZipFile("Roblox.zip", 'r') as zip_ref:
-                                zip_ref.extractall("client")
-                            shutil.move("client/RobloxPlayer.app", "Roblox.app")
-                            shutil.rmtree("client", ignore_errors=True)
-                            os.remove("Roblox.zip")
-                            print("Roblox updated successfully")
+                    download(f"https://setup.rbxcdn.com/mac/{k['clientVersionUpload']}-RobloxPlayer.zip", "Roblox.zip")
+                    print("Successfully downloaded Roblox")
+                    with zipfile.ZipFile("Roblox.zip", 'r') as zip_ref:
+                        zip_ref.extractall("client")
+                    shutil.move("client/RobloxPlayer.app", "Roblox.app")
+                    print("Roblox updated successfully")
+                    print("Removing temp data")
+                    shutil.rmtree("client", ignore_errors=True)
+                    os.remove("Roblox.zip")
     else:
         logging.info("Skipping update due to terminal argument or configuration")
 except Exception as e:
     logging.error(traceback.format_exc())
 logging.info("testing...")
 try:
-    logging.info(bootstrapperConfiguration)
-    for mod in bootstrapperConfiguration["mods"]:
+    for mod in os.listdir("mods"):
         logging.debug(f"Adding {mod}")
-        mods.Install(mod, True)
+        mods.Install("mods/"+mod, True)
 except Exception as e:
     logging.error(e)
 

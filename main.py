@@ -15,9 +15,9 @@ import time
 while True:
     version_roblox = patches.GetRobloxVersion("/Applications/Roblox.app/Contents/Info.plist")
     if version_roblox == "Unknown":
-        title = "Roblox Configurator 2.0 for MacOS"
+        title = "Roblox Configurator 2.1 for MacOS"
     else:
-        title = f"Roblox Configurator 2.0 for MacOS (Roblox: {version_roblox})"
+        title = f"Roblox Configurator 2.1 for MacOS (Roblox: {version_roblox})"
     options = [
         "Install Roblox",
         "Install Roblox Studio",
@@ -38,7 +38,7 @@ while True:
         if option == "Install Bootstrapper (beta)":
             print("WARN: The bootstrapper is in beta and may cause some issues")
             print("It is recommended to NOT launch roblox using the web broswer!")
-            if input("Press y to install").lower() == "y":
+            if input("Press y to install : ").lower() == "y":
                 print("Installing. Please wait!")
                 if os.path.exists("/Applications/Roblox.app/Contents/MacOS/bootstrapper"):
                     print("Reinstalling the bootstrapper")
