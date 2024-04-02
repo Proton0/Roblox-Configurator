@@ -9,12 +9,13 @@ def NotifyPlayer(title, message):
     osascript -e 'display notification "{message}" with title "{title}" sound name "Submarine"'
     """)
 
-def Launch():
+def Launch(process=None):
     NotifyPlayer("Roblox Configurator", "Please launch a game")
     hasFound = False
-    process = subprocess.Popen(["/Applications/Roblox.app/Contents/MacOS/RobloxPlayer"],
-                               stdout=subprocess.PIPE,
-                               stderr=subprocess.PIPE)
+    if process is None:
+        process = subprocess.Popen(["/Applications/Roblox.app/Contents/MacOS/RobloxPlayer"],
+                                   stdout=subprocess.PIPE,
+                                   stderr=subprocess.PIPE)
     found_udmux = False
     found_rcc = False
     while True:

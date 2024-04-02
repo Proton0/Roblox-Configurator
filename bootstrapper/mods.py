@@ -1,17 +1,6 @@
 import os
-from pick import pick
 import shutil
 from tqdm import tqdm
-def InstallUI():
-    options = os.listdir("mods")
-    title = "Select a pack to install"
-    option, index = pick(options, title)
-    print(f"Installing pack {option}. Please wait!")
-    if os.path.isfile("mods/" + option):
-        print("Files are not allowed. Please extract it")
-        return
-    Install("mods/" + option)
-
 
 def Install(pack_folder, bootstrapper=False):
     folders = []
