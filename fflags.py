@@ -3,35 +3,56 @@ import json
 import shutil
 import os
 
+
 def CreateClientSettings():
     if not os.path.exists("/Applications/Roblox.app/Contents/MacOS/ClientSettings"):
         os.makedirs("/Applications/Roblox.app/Contents/MacOS/ClientSettings")
-    if not os.path.exists("/Applications/Roblox.app/Contents/MacOS/ClientSettings/ClientAppSettings.json"):
-        file = open('/Applications/Roblox.app/Contents/MacOS/ClientSettings/ClientAppSettings.json', 'w')
+    if not os.path.exists(
+        "/Applications/Roblox.app/Contents/MacOS/ClientSettings/ClientAppSettings.json"
+    ):
+        file = open(
+            "/Applications/Roblox.app/Contents/MacOS/ClientSettings/ClientAppSettings.json",
+            "w",
+        )
         file.write("{}")
         file.close()
 
+
 def WriteFFLag(name, value):
     CreateClientSettings()
-    fflags_file = open("/Applications/Roblox.app/Contents/MacOS/ClientSettings/ClientAppSettings.json", "r")
+    fflags_file = open(
+        "/Applications/Roblox.app/Contents/MacOS/ClientSettings/ClientAppSettings.json",
+        "r",
+    )
     fflags = json.loads(fflags_file.read())
     fflags_file.close()
-    fflags_file = open("/Applications/Roblox.app/Contents/MacOS/ClientSettings/ClientAppSettings.json", "w")
+    fflags_file = open(
+        "/Applications/Roblox.app/Contents/MacOS/ClientSettings/ClientAppSettings.json",
+        "w",
+    )
     fflags[name] = value
     fflags_file.write(json.dumps(fflags))
     fflags_file.close()
 
+
 def DeleteFFLag(name):
     CreateClientSettings()
     print("Reading fflags")
-    fflags_file = open("/Applications/Roblox.app/Contents/MacOS/ClientSettings/ClientAppSettings.json", "r")
+    fflags_file = open(
+        "/Applications/Roblox.app/Contents/MacOS/ClientSettings/ClientAppSettings.json",
+        "r",
+    )
     print("Loading fflags")
     fflags = json.loads(fflags_file.read())
     fflags_file.close()
-    fflags_file = open("/Applications/Roblox.app/Contents/MacOS/ClientSettings/ClientAppSettings.json", "w")
+    fflags_file = open(
+        "/Applications/Roblox.app/Contents/MacOS/ClientSettings/ClientAppSettings.json",
+        "w",
+    )
     fflags.pop(name)
     fflags_file.write(json.dumps(fflags))
     fflags_file.close()
+
 
 def FFlagLaunch():
     title = "Select an FFLag Tweak"
@@ -42,11 +63,13 @@ def FFlagLaunch():
         "Configure lighting",
         "Configure textures",
         "Configure renderer",
-        "Configure UI"
+        "Configure UI",
     ]
     option, index = pick(options, title)
     if option == "Reset all FFLag tweaks":
-        shutil.rmtree("/Applications/Roblox.app/Contents/MacOS/ClientSettings", ignore_errors=True)
+        shutil.rmtree(
+            "/Applications/Roblox.app/Contents/MacOS/ClientSettings", ignore_errors=True
+        )
         print("Succesfully deleted all FFLag tweaks")
 
     if option == "Unlock FPS":
@@ -58,7 +81,6 @@ def FFlagLaunch():
         WriteFFLag("FFlagDebugGraphicsDisableMetal", True)
         WriteFFLag("FFlagDebugGraphicsPreferVulkan", True)
         print("Unlocked FPS and enabled vulkan succesfully")
-
 
     if option == "Enable 21 Graphics slider":
         WriteFFLag("FFlagFixGraphicsQuality", True)
@@ -77,13 +99,9 @@ def FFlagLaunch():
     if option == "Configure UI":
         UI()
 
+
 def Lights():
-    options = [
-        "Enable Future",
-        "Disable Future",
-        "Enable Voxel",
-        "Disable Voxel"
-    ]
+    options = ["Enable Future", "Disable Future", "Enable Voxel", "Disable Voxel"]
     option, index = pick(options, "Select lighting config")
     if option == "Enable Future":
         WriteFFLag("FFlagDebugForceFutureIsBrightPhase3", True)
@@ -101,11 +119,9 @@ def Lights():
         WriteFFLag("DFFlagDebugRenderForceTechnologyVoxel", False)
         print("Succesfully disabled Phase 3 lighting")
 
+
 def Textures():
-    options = [
-        "Use old textures",
-        "Use new textures"
-    ]
+    options = ["Use old textures", "Use new textures"]
     option, index = pick(options, "Select textures")
     if option == "Use old textures":
         WriteFFLag("FStringPartTexturePackTable2022", False)
@@ -116,19 +132,16 @@ def Textures():
         WriteFFLag("FStringPartTexturePackTablePre2022", False)
         print("Forced roblox to use new textures")
 
+
 def Render():
-    options = [
-        "Enable Vulkan",
-        "Enable Metal",
-        "Let roblox pick the renderer"
-    ]
+    options = ["Enable Vulkan", "Enable Metal", "Let roblox pick the renderer"]
     option, index = pick(options, "Select what renderer roblox will use")
 
     if option == "Let roblox pick the renderer":
-        DeleteFFLag("FFlagDebugGraphicsPreferVulkan") # delete prefer
+        DeleteFFLag("FFlagDebugGraphicsPreferVulkan")  # delete prefer
         DeleteFFLag("FFlagDebugGraphicsPreferMetal")
         DeleteFFLag("FFlagDebugGraphicsPreferOpenGL")
-        DeleteFFLag("FFlagDebugGraphicsDisableOpenGL") # disable
+        DeleteFFLag("FFlagDebugGraphicsDisableOpenGL")  # disable
         DeleteFFLag("FFlagDebugGraphicsDisableMetal")
         DeleteFFLag("FFlagDebugGraphicsDisableVulkan")
         print("Roblox will now pick the renderer")
@@ -159,6 +172,7 @@ def Render():
         # disable others
         WriteFFLag("FFlagDebugGraphicsDisableMetal", True)
         WriteFFLag("FFlagDebugGraphicsDisableVulkan", True)
+
 
 def UI():
     options = [
