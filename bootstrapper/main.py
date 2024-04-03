@@ -73,6 +73,7 @@ for argument in sys.argv:
         print(
             "--reinstall            | Will reinstall roblox (requires updates to be enabled)"
         )
+        print("-d                     | Enables debugging mode")
         print("--roblox-bootstrapper  | Launches roblox's original bootstrapper")
         exit()
     if argument == "--roblox-bootstrapper":

@@ -1,8 +1,10 @@
 
+### This project has been archived and will no longer be updated.
+#### If you want then you can make your own version of Roblox Configurator (just credit me)
+
 # Roblox Configurator
 
 A Roblox configurator for MacOS
-
 
 ## Demo
 
